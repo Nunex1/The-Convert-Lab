@@ -7,6 +7,11 @@ import pytest
 import pymupdf
 from fastapi.testclient import TestClient
 from backend.main import app
+from backend.services.temporary_files import cleanup_job
+
+
+def pytest_sessionfinish(session, exitstatus):
+    cleanup_job(Path(os.environ['TEMP_DIR']))
 
 
 @pytest.fixture

@@ -52,7 +52,7 @@ docker compose up --build
 
 Depois do primeiro build, `docker compose up` é suficiente. Abra http://localhost:3000. As portas são publicadas apenas na interface local. Para outra origem, ajuste `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL` e `CORS_ORIGINS` antes do build.
 
-Os containers executam sem root. O backend tem filesystem somente leitura, temporários em `tmpfs`, limite de memória, CPU e processos. Não há volume de documentos persistente. O serviço Docker não estava ativo no ambiente da entrega; a sintaxe do Compose foi validada, mas o build Linux e a execução dos containers ainda precisam ser realizados.
+Os containers executam sem root. O backend tem filesystem somente leitura, temporários em `tmpfs`, limite de memória, CPU e processos. Não há volume de documentos persistente. Build e conversões reais foram verificados em Linux/Python 3.13 com filesystem somente leitura e limite de 512 MB; consulte `verification/VALIDACAO.md` para as evidências atuais.
 
 ## Conversões
 
@@ -111,6 +111,8 @@ convertlab/
 ```
 
 Cada conversão roda em um **subprocesso independente** com timeout. Isso evita compartilhar o estado interno dos motores PDF entre threads e permite terminar uma conversão travada. O backend mantém limite de concorrência por processo; excesso recebe HTTP 429. Em produção, use um worker Uvicorn por container ou ajuste os limites considerando que múltiplos workers multiplicam a concorrência.
+
+O comando interno `python -m backend.worker <TEMP_DIR>/job-<uuid>` lê `request.json` e `input.<ext>`, valida ambos, converte pelo registro existente e reabre `result.<ext>`. Publica `status.json` atomicamente somente depois da validação. Códigos de saída: `0` sucesso, `1` erro de documento com mensagem curada, `2` falha interna com mensagem genérica. Cancelamento, desconexão e timeout encerram o processo antes da limpeza dos temporários.
 
 Adicionar uma conversão exige um módulo `convert(source: Path, target: Path) -> list[str]`, uma entrada em `registry.py`, a matriz em `config.py`, validação de entrada/saída e testes. O retorno contém somente avisos curados, nunca conteúdo do documento. Novos tipos de saída também precisam de rótulos e ícones no frontend. A separação permite evoluir para filas, lotes e OCR sem misturar UI e motores; esses recursos futuros não estão implementados.
 
@@ -179,8 +181,9 @@ No diretório `frontend`:
 pnpm test
 pnpm typecheck
 pnpm build
-pnpm start
 ```
+
+O build padrão gera `frontend/out/` para a Netlify. Para usar o servidor Node local, gere com `NEXT_BUILD_STANDALONE=1 pnpm build` e execute `pnpm start`. No PowerShell, defina `$env:NEXT_BUILD_STANDALONE = '1'` antes do build. O Dockerfile ativa esse modo automaticamente sem alterar o build estático da Netlify.
 
 Os testes Python produzem PDFs, Word e MIME sintéticos, passam pela API, reabrem DOCX/XLSX/PPTX e conferem conteúdo. Incluem tabelas, datas, percentuais, zeros à esquerda, fórmulas maliciosas, arquivos corrompidos, senha, scans, ZIP excessivo, timeout, concorrência e limpeza. Testes React cobrem drag and drop, seleção pelo explorador, remoção por teclado, formatos compatíveis e progresso honesto.
 
@@ -188,7 +191,11 @@ O relatório em `verification/VALIDACAO.md` distingue o que foi executado de lim
 
 ## Deploy
 
-### Vercel — frontend
+### Netlify — frontend atual
+
+Diretório de build: `frontend`; comando: `pnpm build`; publicação: `frontend/out` (ou `out` quando relativo ao diretório de build). Preserve a variável `NEXT_PUBLIC_API_URL` já configurada. Não configure `NEXT_BUILD_STANDALONE` na Netlify.
+
+### Vercel — alternativa de frontend
 
 Importe o projeto e selecione `frontend` como Root Directory. Build: `pnpm build`. Configure `NEXT_PUBLIC_API_URL` com a URL HTTPS pública da API e `NEXT_PUBLIC_SITE_URL` com a URL pública do frontend. As variáveis públicas são incorporadas no build, então alterações exigem novo deploy.
 
@@ -198,7 +205,7 @@ O navegador envia o upload **diretamente à API Python**. A conversão não usa 
 
 Use uma plataforma com suporte a container ou processo Python persistente. O Dockerfile está em `backend/Dockerfile`, com contexto de build na raiz. Configure `CORS_ORIGINS` para a origem exata da Vercel e healthcheck `/api/health`. Garanta suporte a requisições longas, subprocessos, diretório temporário e memória para os motores. A porta padrão é 8000; adapte o comando caso o provedor exija `PORT`.
 
-Nenhum deploy externo foi realizado nesta entrega.
+O estado da publicação e os testes contra a API pública estão documentados em `verification/VALIDACAO.md`. O script `verification/smoke.py` gera entradas sintéticas, executa as sete conversões por HTTP e reabre os resultados; não utiliza documentos do usuário.
 
 ## Limitações conhecidas
 
@@ -210,7 +217,7 @@ Nenhum deploy externo foi realizado nesta entrega.
 - PowerPoint com imagens, desenhos, rotação ou layout complexo usa fallback visual por página. Texto simples usa fonte de substituição Arial; não há reconstrução editável de todos os layouts.
 - Word pode usar fallback de texto e imagens, com aparência simplificada e possível duplicação visual do texto nas imagens de referência.
 - Sem lotes, ZIP de resultados, autenticação, histórico, integração com nuvem ou OCR avançado nesta versão.
-- `backend/requirements.txt` congela o ambiente de validação Python. A instalação nativa foi validada em Windows/Python 3.13; o build Linux ainda precisa ser executado com Docker ativo.
+- `backend/requirements.txt` congela o ambiente de validação Python. A instalação e os testes foram validados em Windows e Linux/Python 3.13. Os testes são amostrais; documentos maiores ou mais complexos podem atingir limites de memória, tamanho ou tempo.
 
 ## Referências dos motores
 

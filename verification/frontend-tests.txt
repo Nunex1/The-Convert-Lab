@@ -1,9 +1,10 @@
+$ vitest run
 
- RUN  v5.0.3 C:/Users/55199/Documents/Codex/2026-10-02/files-pasted-by-the-user-quero/outputs/convertlab/frontend
+ RUN  v5.0.3 C:/Users/55199/Documents/ChatGPT/ConvertLab/frontend
 
 
  Test Files  1 passed (1)
       Tests  8 passed (8)
-   Start at  15:45:47
-   Duration  2.60s (environment 50%, tests 20%, setup 14%, import 11%, transform 4%, worker 1%)
+   Start at  09:53:51
+   Duration  12.06s (setup 48%, environment 44%, tests 4%, import 2%, transform 1%)
 

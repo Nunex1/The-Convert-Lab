@@ -7,7 +7,7 @@ const standalone = new URL('.next/standalone/', root);
 try {
   await access(new URL('server.js', standalone));
 } catch {
-  console.error('Execute pnpm build antes de iniciar o servidor de produção.');
+  console.error('Gere o servidor com NEXT_BUILD_STANDALONE=1 pnpm build antes de iniciar. O build padrão exporta arquivos estáticos em out/ para a Netlify.');
   process.exit(1);
 }
 

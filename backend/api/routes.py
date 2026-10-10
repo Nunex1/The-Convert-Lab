@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 import logging
 import sys
@@ -6,7 +7,7 @@ import time
 import uuid
 from pathlib import Path
 from urllib.parse import quote
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from starlette.responses import FileResponse
 from backend.config import FORMATS, MIMES, MAX_FILE_SIZE, MAX_FILE_SIZE_MB, MAX_PAGES, MAX_CONCURRENT, CONVERSION_TIMEOUT, TEMP_ROOT
 from backend.services.file_detector import detect_extension, output_name
@@ -16,6 +17,30 @@ from backend.services.temporary_files import cleanup_job
 router = APIRouter(prefix='/api')
 slots = asyncio.Semaphore(MAX_CONCURRENT)
 logger = logging.getLogger('convertlab')
+
+
+async def wait_for_worker(process, request):
+    async def disconnected():
+        while True:
+            if (await request.receive())['type'] == 'http.disconnect':
+                return
+
+    finished = asyncio.create_task(process.wait())
+    disconnect = asyncio.create_task(disconnected())
+    try:
+        done, _ = await asyncio.wait(
+            {finished, disconnect}, timeout=CONVERSION_TIMEOUT,
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        if not done:
+            raise HTTPException(504, 'Este documento demorou demais para converter. Tente um arquivo menor.')
+        if disconnect in done:
+            raise HTTPException(499, 'Conversão cancelada.')
+        await finished
+    finally:
+        for task in (finished, disconnect):
+            task.cancel()
+        await asyncio.gather(finished, disconnect, return_exceptions=True)
 
 
 class TemporaryFileResponse(FileResponse):
@@ -46,7 +71,7 @@ def health():
 
 
 @router.post('/convert')
-async def convert(file: UploadFile = File(...), output_format: str = Form(...)):
+async def convert(request: Request, file: UploadFile = File(...), output_format: str = Form(...)):
     job = None
     process = None
     acquired = False
@@ -71,19 +96,36 @@ async def convert(file: UploadFile = File(...), output_format: str = Form(...)):
                     raise HTTPException(413, f'O arquivo excede o limite de {MAX_FILE_SIZE_MB} MB.')
                 destination.write(chunk)
         (job / 'request.json').write_text(json.dumps({'input': input_format, 'output': output_format, 'mime': file.content_type}), encoding='utf-8')
-        process = await asyncio.create_subprocess_exec(
+        spawning = asyncio.create_task(asyncio.create_subprocess_exec(
             sys.executable, '-m', 'backend.worker', str(job),
             cwd=str(Path(__file__).resolve().parents[2]),
             stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL,
-        )
+        ))
         try:
-            await asyncio.wait_for(process.wait(), timeout=CONVERSION_TIMEOUT)
-        except TimeoutError:
-            raise HTTPException(504, 'Este documento demorou demais para converter. Tente um arquivo menor.') from None
+            process = await asyncio.shield(spawning)
+        except asyncio.CancelledError:
+            # Acquire the handle even if cancellation races with process creation.
+            process = await spawning
+            raise
+        await wait_for_worker(process, request)
         status_path = job / 'status.json'
-        if process.returncode != 0 or not status_path.exists():
+        if process.returncode not in (0, 1) or not status_path.is_file():
             raise HTTPException(422, 'Não foi possível processar este documento. Tente uma versão menor ou simplificada.')
-        status = json.loads(status_path.read_text(encoding='utf-8'))
+        try:
+            status = json.loads(status_path.read_text(encoding='utf-8'))
+            valid = isinstance(status, dict) and (
+                (process.returncode == 0 and status.get('ok') is True
+                 and isinstance(status.get('warnings'), list)
+                 and all(isinstance(w, str) for w in status['warnings'])
+                 and (job / ('result.' + output_format)).is_file())
+                or (process.returncode == 1 and status.get('ok') is False
+                    and status.get('code') == 'CONVERSION_ERROR'
+                    and isinstance(status.get('message'), str))
+            )
+        except (ValueError, OSError):
+            valid = False
+        if not valid:
+            raise HTTPException(422, 'Não foi possível processar este documento. Tente uma versão menor ou simplificada.')
         if not status['ok']:
             logger.info('conversion status=error type=%s code=%s', input_format, status['code'])
             raise HTTPException(422, status['message'])
@@ -99,7 +141,8 @@ async def convert(file: UploadFile = File(...), output_format: str = Form(...)):
         raise HTTPException(400, str(error)) from None
     finally:
         if process and process.returncode is None:
-            process.kill()
+            with contextlib.suppress(ProcessLookupError):
+                process.kill()
             await process.wait()
         await file.close()
         if acquired:

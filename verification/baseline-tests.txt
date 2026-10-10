@@ -1,0 +1,142 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/python
+rootdir: /tmp/baseline
+plugins: anyio-4.15.1
+collecting ... collected 8 items
+
+backend/tests/test_conversions.py::test_pdf_word FAILED                  [ 12%]
+backend/tests/test_conversions.py::test_pdf_excel FAILED                 [ 25%]
+backend/tests/test_conversions.py::test_pdf_pptx_visual_fallback FAILED  [ 37%]
+backend/tests/test_conversions.py::test_pdf_pptx_editable FAILED         [ 50%]
+backend/tests/test_conversions.py::test_mhtml FAILED                     [ 62%]
+backend/tests/test_initial_flows.py::test_01_pdf_markdown FAILED         [ 75%]
+backend/tests/test_initial_flows.py::test_02_docx_markdown FAILED        [ 87%]
+backend/tests/test_initial_flows.py::test_03_mht_excel FAILED            [100%]
+
+=================================== FAILURES ===================================
+________________________________ test_pdf_word _________________________________
+
+client = <starlette.testclient.TestClient object at 0x7f970dd31160>
+pdf = PosixPath('/tmp/pytest-of-converter/pytest-0/test_pdf_word0/Relatorio.pdf')
+
+    def test_pdf_word(client, pdf):
+        response = convert(client, pdf, 'docx', 'application/pdf')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_conversions.py:13: AssertionError
+________________________________ test_pdf_excel ________________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebda4e10>
+pdf = PosixPath('/tmp/pytest-of-converter/pytest-0/test_pdf_excel0/Relatorio.pdf')
+
+    def test_pdf_excel(client, pdf):
+        response = convert(client, pdf, 'xlsx', 'application/pdf')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_conversions.py:23: AssertionError
+________________________ test_pdf_pptx_visual_fallback _________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebda6990>
+pdf = PosixPath('/tmp/pytest-of-converter/pytest-0/test_pdf_pptx_visual_fallback0/Relatorio.pdf')
+
+    def test_pdf_pptx_visual_fallback(client, pdf):
+        response = convert(client, pdf, 'pptx', 'application/pdf')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_conversions.py:32: AssertionError
+____________________________ test_pdf_pptx_editable ____________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebde1f30>
+tmp_path = PosixPath('/tmp/pytest-of-converter/pytest-0/test_pdf_pptx_editable0')
+
+    def test_pdf_pptx_editable(client, tmp_path):
+        path = tmp_path / 'text.pdf'
+        with pymupdf.open() as document:
+            page = document.new_page()
+            page.insert_text((70, 90), 'Texto editavel', fontsize=20)
+            document.save(path)
+        response = convert(client, path, 'pptx', 'application/pdf')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_conversions.py:46: AssertionError
+__________________________________ test_mhtml __________________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebde3950>
+mht = PosixPath('/tmp/pytest-of-converter/pytest-0/test_mhtml0/Tabelas.mht')
+
+    def test_mhtml(client, mht):
+        path = mht.with_suffix('.mhtml')
+        path.write_bytes(mht.read_bytes())
+        response = convert(client, path, 'xlsx', 'application/octet-stream')
+>       assert response.status_code == 200
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_conversions.py:55: AssertionError
+_____________________________ test_01_pdf_markdown _____________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebdbf650>
+pdf = PosixPath('/tmp/pytest-of-converter/pytest-0/test_01_pdf_markdown0/Relatorio.pdf')
+
+    def test_01_pdf_markdown(client, pdf):
+        response = convert(client, pdf, 'md', 'application/pdf')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_initial_flows.py:12: AssertionError
+____________________________ test_02_docx_markdown _____________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebdc29c0>
+docx = PosixPath('/tmp/pytest-of-converter/pytest-0/test_02_docx_markdown0/Documento.docx')
+
+    def test_02_docx_markdown(client, docx):
+        response = convert(client, docx, 'md', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_initial_flows.py:21: AssertionError
+______________________________ test_03_mht_excel _______________________________
+
+client = <starlette.testclient.TestClient object at 0x7f96ebdc3570>
+mht = PosixPath('/tmp/pytest-of-converter/pytest-0/test_03_mht_excel0/Tabelas.mht')
+
+    def test_03_mht_excel(client, mht):
+        response = convert(client, mht, 'xlsx', 'message/rfc822')
+>       assert response.status_code == 200, response.text
+E       AssertionError: {"detail":"Não foi possível processar este documento. Tente uma versão menor ou simplificada."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+backend/tests/test_initial_flows.py:30: AssertionError
+=============================== warnings summary ===============================
+../../usr/local/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /usr/local/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/test_conversions.py::test_pdf_word - AssertionError: {"d...
+FAILED backend/tests/test_conversions.py::test_pdf_excel - AssertionError: {"...
+FAILED backend/tests/test_conversions.py::test_pdf_pptx_visual_fallback - Ass...
+FAILED backend/tests/test_conversions.py::test_pdf_pptx_editable - AssertionE...
+FAILED backend/tests/test_conversions.py::test_mhtml - assert 422 == 200
+FAILED backend/tests/test_initial_flows.py::test_01_pdf_markdown - AssertionE...
+FAILED backend/tests/test_initial_flows.py::test_02_docx_markdown - Assertion...
+FAILED backend/tests/test_initial_flows.py::test_03_mht_excel - AssertionErro...
+========================= 8 failed, 1 warning in 1.29s =========================

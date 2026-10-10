@@ -9,15 +9,16 @@ from backend.services.layout_detector import editable_page
 
 def convert(source: Path, target: Path) -> list[str]:
     presentation = Presentation()
-    fallback_pages = 0
+    fallback_pages = []
     with pymupdf.open(source) as document:
         first = document[0].rect
         scale = min(1, 1440 / max(first.width, first.height))
         width, height = max(72, first.width * scale), max(72, first.height * scale)
         presentation.slide_width, presentation.slide_height = Pt(width), Pt(height)
-        for page in document:
+        for page_number, page in enumerate(document, 1):
             slide = presentation.slides.add_slide(presentation.slide_layouts[6])
-            blocks = page.get_text('dict')['blocks']
+            # Eligibility needs text only; avoid decoding full-resolution images twice.
+            blocks = page.get_text('dict', flags=pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)['blocks']
             factor = min(width / page.rect.width, height / page.rect.height)
             offset_x = (width - page.rect.width * factor) / 2
             offset_y = (height - page.rect.height * factor) / 2
@@ -41,9 +42,10 @@ def convert(source: Path, target: Path) -> list[str]:
                             color = span['color']
                             run.font.color.rgb = RGBColor((color >> 16) & 255, (color >> 8) & 255, color & 255)
             else:
-                fallback_pages += 1
+                fallback_pages.append(page_number)
                 zoom = min(2, 2400 / max(page.rect.width, page.rect.height))
                 image = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), alpha=False).tobytes('png')
                 slide.shapes.add_picture(BytesIO(image), Pt(offset_x), Pt(offset_y), width=Pt(page.rect.width * factor), height=Pt(page.rect.height * factor))
     presentation.save(target)
-    return [f'{fallback_pages} página(s) inserida(s) como imagem para preservar o layout. Essas páginas não têm objetos editáveis.'] if fallback_pages else []
+    return [f'{len(fallback_pages)} página(s) inserida(s) como imagem para preservar o layout '
+            f'(páginas: {", ".join(map(str, fallback_pages))}). Essas páginas não têm objetos editáveis.'] if fallback_pages else []

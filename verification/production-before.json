@@ -1,0 +1,109 @@
+{
+  "url": "https://the-convert-lab.onrender.com",
+  "endpoints": {
+    "health": {
+      "status": "ok"
+    },
+    "formats": {
+      "pdf": [
+        "md",
+        "docx",
+        "xlsx",
+        "pptx"
+      ],
+      "docx": [
+        "md"
+      ],
+      "mht": [
+        "xlsx"
+      ],
+      "mhtml": [
+        "xlsx"
+      ]
+    },
+    "config": {
+      "max_file_size_mb": 25,
+      "max_pdf_pages": 150,
+      "timeout_seconds": 120
+    }
+  },
+  "conversions": [
+    {
+      "input": "pdf",
+      "output": "md",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.26,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "pdf",
+      "output": "docx",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.2,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "pdf",
+      "output": "xlsx",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.19,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "pdf",
+      "output": "pptx",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.21,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "docx",
+      "output": "md",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.24,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "mht",
+      "output": "xlsx",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.2,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    },
+    {
+      "input": "mhtml",
+      "output": "xlsx",
+      "http": 422,
+      "bytes": 98,
+      "seconds": 0.19,
+      "error": {
+        "detail": "Não foi possível processar este documento. Tente uma versão menor ou simplificada."
+      },
+      "validated": false
+    }
+  ]
+}

@@ -1,71 +1,69 @@
-# Validação — ConvertLab
+# Validação da restauração — 10/10/2026
 
-Data: 2 de outubro de 2026. Ambiente: Windows, Python 3.13.14, Node.js 24.19.0.
+## Diagnóstico reproduzido
 
-## Resultado
+Base: `406f855a0c6c8837a90b61ec8ea1163210dc4469`, branch `main`.
 
-**Implementação local funcional.** Sete combinações de conversão implementadas; arquivos reais produzidos e reabertos. **40 testes de backend e 8 testes de interface aprovados.** TypeScript sem erros e build de produção Next.js concluído.
+- `python -m backend.worker`: módulo inexistente. Os oito testes originais falham sem o worker (`baseline-tests.txt`).
+- API pública `https://the-convert-lab.onrender.com`: health/config/formats respondem, mas as sete conversões retornam 422 (`production-before.json`).
+- Render: serviço `srv-db52832jnfac739019qg`, deploy antigo `dep-db5283ijnfac73901ba0`, marcado Live no commit acima. Esse estado não comprovava conversões.
+- Frontend publicado: upload de PDF, seleção PowerPoint e erro de processamento reproduzido pelo navegador integrado.
+- O relatório antigo mencionava 40 testes de backend, mas só oito estavam versionados. As evidências desta execução substituem essa afirmação.
+- API não observava desconexão durante processamento; o sweeper podia parar numa corrida com remoção de pastas.
+- Build estático do frontend gerava `out/index.html`, sem `.next/standalone/server.js`, contrariando o Dockerfile.
 
-## Backend
+## Implementação
 
-Evidência: `backend-tests.txt`.
+- `backend/worker.py`: valida diretório UUID sob TEMP_DIR, JSON limitado, formatos, arquivo regular, tamanho, MIME e estrutura; usa os motores existentes; reabre saída; publica status atômico. Exit 0 sucesso, 1 erro esperado, 2 falha interna. Remove saída parcial; detalhes internos não atravessam a API.
+- `backend/api/routes.py`: valida contrato e exit code; preserva mensagens curadas; observa desconexão, timeout e cancelamento, incluindo a corrida durante criação do subprocesso; encerra processo antes da limpeza.
+- `pdf_to_powerpoint.py`: evita extrair bytes de imagens desnecessariamente na análise de texto e identifica páginas com fallback visual nos avisos.
+- `temporary_files.py`: tolera remoção simultânea durante a varredura.
+- Testes: worker direto, corrupção, senha, ZIP/XML inseguro, limites, concorrência, cancelamento, timeout, falha de transmissão, HTTP/cabeçalhos/CORS e matriz real de formatos.
+- Docker do frontend ativa standalone explicitamente. O padrão continua exportação estática para Netlify. Nenhum redesign nem alteração da variável da Netlify.
+- `.gitignore`/`.dockerignore`: excluem ambientes, builds, caches e entradas/saídas locais. Bytecode e cache TypeScript removidos do versionamento.
+- `.github/workflows/backend.yml`: build Docker e regressão sob restrições de produção em futuros pushes/PRs.
+- Nenhuma dependência adicionada e nenhum limite ampliado.
 
-- PDF → Markdown: título e tabela conferidos no texto.
-- DOCX → Markdown: título, negrito e tabela conferidos.
-- MHT e MHTML → Excel: moeda, percentual e data reabertos como tipos adequados.
-- PDF → Word: texto e dados da tabela reabertos com python-docx.
-- PDF → Excel: `Receita` e `1250.5` encontrados nas células esperadas.
-- PDF → PowerPoint: slide com fallback visual confirmado; cenário separado verifica texto editável.
-- Arquivos inválidos, vazios e formatos incompatíveis recusados.
-- MIME incorreto, assinatura incorreta, ZIP excessivo e senha recusados.
-- Limites de arquivo, corpo HTTP com e sem Content-Length, timeout e concorrência verificados.
-- Scan recusado para Markdown/Excel e convertido em Word com imagem da página.
-- Ausência de tabelas resulta em mensagem objetiva.
-- Fórmulas de planilha permanecem texto. Zeros à esquerda e números ambíguos não são convertidos silenciosamente.
-- Temporários limpos após sucesso, erro, timeout e falha na transmissão da resposta; limpeza de órfãos respeita pastas recentes.
+## Testes executados
 
-Há um aviso de depreciação do adaptador httpx do TestClient/Starlette; ele não impediu os testes nem afeta o fluxo de produção. A dependência está congelada para reprodução.
+- Windows/Python 3.13.14: **61 aprovados, 0 reprovados, 0 ignorados** (`backend-tests.txt`).
+- Linux/Python 3.13.16: **61 aprovados, 0 reprovados, 0 ignorados** (`backend-linux-tests.txt`).
+- Interface: **8 aprovados, 0 reprovados, 0 ignorados** (`frontend-tests.txt`).
+- Total final: **130 execuções aprovadas**. As oito falhas do baseline são anteriores à correção. Uma primeira coleta dos testes novos teve erro de nome reservado, corrigido antes das execuções finais.
+- TypeScript e build estático Next.js passaram; `out/index.html` gerado.
+- Imagens Docker de backend e frontend construídas; frontend inicia como usuário node e responde HTTP 200.
+- Backend: UID 10001, filesystem read-only, `/tmp` tmpfs de 512 MB, memória 512 MB, 2 CPUs, 128 PIDs, sem capabilities e sem novos privilégios. `pip check` passou em Windows e Linux.
+- Uvicorn e sete conversões HTTP reais no container passaram (`docker-http.json`); arquivos reabertos, valores/texto/slides, MIME, download, CORS e cabeçalhos conferidos.
+- Pico de memória do container na matriz HTTP: **372.391.936 bytes (~355 MiB)** via cgroup `memory.peak`. `/tmp/convertlab` ficou sem subdiretórios de jobs ao final.
+- `docker compose config --quiet` e `git diff --check` passaram.
+- Aviso conhecido de depreciação do adaptador httpx do Starlette nos testes; não foram alteradas dependências para ocultá-lo.
 
-## Interface
+## Matriz local e Docker
 
-Evidência: `frontend-tests.txt`.
+| Conversão | Resultado verificado |
+|---|---|
+| PDF → Markdown | Texto e tabela extraídos |
+| DOCX → Markdown | Título, texto, negrito e tabela |
+| PDF → DOCX | Reaberto com python-docx; texto e tabela presentes |
+| PDF → XLSX | Reaberto com openpyxl; células e número 1250.5 |
+| PDF → PPTX | Reaberto com python-pptx; texto editável e fallback visual |
+| MHT → XLSX | MIME/HTML real; células tipadas; fórmula preservada como texto |
+| MHTML → XLSX | Mesmo motor, upload independente validado |
 
-- Drag and drop recebe um arquivo, informa limite de seleção múltipla e impede substituição durante processamento.
-- Seleção pelo input de arquivo e remoção usando Enter.
-- Apenas saídas compatíveis ficam disponíveis após seleção.
-- Percentual exibido no envio; conversão sem percentual inventado.
-- Erros exibidos como texto, sem interpretar HTML recebido.
+PowerPoint: texto simples, multipágina, imagem, tabela/desenho, rotação e páginas com proporções diferentes. Slides contam as páginas, imagens permanecem dentro da área do slide, sem crop, e avisos identificam fallback. Não há promessa de editabilidade total nem fidelidade perfeita.
 
-## Navegador com API real
+## Publicação e produção
 
-- Seleção de PDF; escolha Markdown; estado real de processamento; sucesso; prévia renderizada; aba Código; fechamento por Escape.
-- Download Markdown confirmado no disco: contém título e tabela da amostra.
-- Ação Copiar retornou sucesso na interface. O adaptador de clipboard do navegador não expôs o conteúdo na releitura; colagem em outro aplicativo não foi validada.
-- DOCX → Markdown concluído na disposição mobile.
-- MHT → Excel concluído e baixado.
-- PDF → Word, Excel e PowerPoint concluídos e baixados. Os três downloads foram reabertos diretamente do disco com bibliotecas de seus formatos.
-- Avisos de fallback do Word/PowerPoint apresentados na interface.
-- PDF com conteúdo inválido apresentou erro inline com a causa, sem modal.
-- Tema claro e escuro alternados.
-- Desktop 1440 × 1000, tablet 820 × 1180, mobile 390 × 844 e largura mínima 320 px sem overflow horizontal. Tablet manteve painéis lado a lado; mobile colocou controles acima do monitor.
-- Nenhum aviso/erro de console retornado na inspeção final do navegador.
+A atualização deste bloco após o push registrará SHA, deploy observado e resultados posteriores. Até então, os testes públicos acima são o diagnóstico anterior à correção, não evidência de sucesso.
 
-Capturas:
+Comando reproduzível para validar as sete combinações:
 
-- `desktop-dark.png`: versão desktop em modo escuro.
-- `tablet-light.png`: tablet em modo claro.
-- `mobile-dark.png`: disposição vertical completa.
-- `mobile-error.png`: erro de PDF inválido no monitor.
+```bash
+python verification/smoke.py https://the-convert-lab.onrender.com verification/local/production
+```
 
-## Compilação e infraestrutura
+## Limitações
 
-- `pnpm typecheck`: passou.
-- `pnpm build`: passou; rotas `/`, `/privacidade`, `/termos`, 404, robots e sitemap geradas.
-- Servidor standalone de produção iniciado localmente. Home, privacidade, termos, robots e sitemap responderam HTTP 200; caminho inexistente retornou 404. API respondeu ao healthcheck e a uma nova conversão PDF → Markdown com HTTP 200 e `Cache-Control: no-store`.
-- `docker compose config --quiet`: passou.
-- Dockerfiles e Compose preparados; daemon Docker indisponível, portanto **build e execução Linux não verificados**.
-- Deploy externo não realizado.
+Entradas sintéticas, nunca substitutos dos resultados do produto. Sem OCR; PDFs digitalizados são recusados para Markdown/Excel e preservados visualmente em Word/PowerPoint. Documentos extremos podem atingir recursos/timeout. O pico de memória medido não caracteriza toda carga possível, especialmente duas conversões grandes simultâneas. Sem ensaio prolongado de carga, telefone físico ou abertura no Microsoft Office nativo.
 
-## Limites da validação
-
-As amostras sintéticas verificam os mecanismos, não garantem fidelidade em todos os documentos. Não houve abertura no Microsoft Word/Excel/PowerPoint nativos, teste em telefone físico, ensaio de carga ou pentest. OCR não está implementado. As limitações e fallbacks estão descritos no README e na interface. Não foram utilizados mocks nas conversões da aplicação.
+O Render Free informa cold start de 50 segundos ou mais; a interface pode exigir Reconectar após seu timeout inicial. Upload via extensão Chrome ficou bloqueado por permissão de arquivos locais; o navegador integrado realizou o upload normalmente.
