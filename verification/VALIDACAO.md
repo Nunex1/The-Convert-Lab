@@ -54,7 +54,16 @@ PowerPoint: texto simples, multipágina, imagem, tabela/desenho, rotação e pá
 
 ## Publicação e produção
 
-A atualização deste bloco após o push registrará SHA, deploy observado e resultados posteriores. Até então, os testes públicos acima são o diagnóstico anterior à correção, não evidência de sucesso.
+- Correção publicada em `main`, sem force push: [`bd523489972b50fb7f94edd04746e7a1c79a97c9`](https://github.com/Nunex1/The-Convert-Lab/commit/bd523489972b50fb7f94edd04746e7a1c79a97c9). A base remota foi reconferida imediatamente antes do commit/push e não havia alterações concorrentes.
+- GitHub Actions [38053980109](https://github.com/Nunex1/The-Convert-Lab/actions/runs/38053980109): **success**, build Docker e regressão aprovados (`github-ci.json`).
+- Render, serviço `srv-db52832jnfac739019qg`, [deploy dep-db53d7k9v7es738n3fg0](https://dashboard.render.com/web/srv-db52832jnfac739019qg/deploys/dep-db53d7k9v7es738n3fg0): **Deploy succeeded | Live**, source `bd52348`, Auto-Deploy, duração 32,7 segundos. Painel indica 10/10/2026 09:59:11 GMT-3; logs registram Live às 09:59:43. Build sem falhas; Uvicorn iniciou como processo 1 na porta 8000, aplicação inicializada, WEB_CONCURRENCY=1.
+- API: `https://the-convert-lab.onrender.com`. Health, formatos e configuração responderam corretamente. **Sete conversões com HTTP 200 e conteúdo reaberto/validado**, com MIME, nome de download, avisos, CORS e cabeçalhos corretos (`production-after.json`). Duração observada: 6,93–35,55 segundos nesta matriz.
+- Site: `https://theconvertlab.netlify.app/`. **Sete conversões completas pelo navegador integrado**, com upload pelo seletor, processamento real, estado de sucesso e download. Todos os arquivos baixados foram reabertos/verificados no disco; hashes e tamanhos em `browser-downloads.json`.
+- PPTX baixado pelo site: 41.335 bytes, dois slides; texto `ConvertLab validation` editável no primeiro, imagem da tabela no segundo. O aviso identificou a página 2 e sua limitação de editabilidade.
+- DOCX/Markdown/Excel do site também tiveram conteúdo conferido. O Word preservou texto, o Markdown de DOCX preservou negrito e as planilhas contêm `Revenue` e 1250.5.
+- Desktop e viewport móvel 390 × 844 verificados; largura do conteúdo 375 px, sem overflow horizontal. Capturas: `production-pptx-success.jpg` e `production-mobile-pptx.jpg`.
+- PDF inválido enviado pelo site retornou a mensagem segura: “O arquivo não possui uma assinatura PDF válida.” A interface saiu do processamento e não ofereceu falso download.
+- Nenhum erro de CORS ou HTTP inesperado nos fluxos bem-sucedidos. O console do frontend já existente registrou React #418 na carga inicial (também antes do deploy). Esse aviso de hidratação não foi reproduzido no container local e não bloqueou nenhuma das sete conversões; sua causa não foi confirmada. Não foi feita alteração especulativa na UI para ocultá-lo.
 
 Comando reproduzível para validar as sete combinações:
 
@@ -67,3 +76,5 @@ python verification/smoke.py https://the-convert-lab.onrender.com verification/l
 Entradas sintéticas, nunca substitutos dos resultados do produto. Sem OCR; PDFs digitalizados são recusados para Markdown/Excel e preservados visualmente em Word/PowerPoint. Documentos extremos podem atingir recursos/timeout. O pico de memória medido não caracteriza toda carga possível, especialmente duas conversões grandes simultâneas. Sem ensaio prolongado de carga, telefone físico ou abertura no Microsoft Office nativo.
 
 O Render Free informa cold start de 50 segundos ou mais; a interface pode exigir Reconectar após seu timeout inicial. Upload via extensão Chrome ficou bloqueado por permissão de arquivos locais; o navegador integrado realizou o upload normalmente.
+
+**CORREÇÃO CONCLUÍDA E VALIDADA EM PRODUÇÃO**, com as limitações amostrais e o aviso preexistente de hidratação descritos acima.

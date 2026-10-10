@@ -1,0 +1,62 @@
+{
+  "site": "https://theconvertlab.netlify.app/",
+  "backend_commit": "bd523489972b50fb7f94edd04746e7a1c79a97c9",
+  "conversions": [
+    {
+      "input": "pdf",
+      "output": "pptx",
+      "filename": "validation.pptx",
+      "bytes": 41335,
+      "sha256": "947eccce2cb9a0279e437b77991e9914547621d8d899842384148cd79fbabc3b",
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "docx",
+      "filename": "validation.docx",
+      "bytes": 37179,
+      "sha256": "f2ce45db33dab166f02d62ce9ba1f2c7d07d9ef61c18ba39b6f5e4bcec05d22f",
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "xlsx",
+      "filename": "validation.xlsx",
+      "bytes": 5159,
+      "sha256": "703d518a76ab6492e8937594e5d5524362308afdfc4d65d71f1563adeac522c2",
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "md",
+      "filename": "validation.md",
+      "bytes": 103,
+      "sha256": "f7ed4794d9da187d7f36148a97be7206192b754453a919a17485b9bb6b210e8c",
+      "validated": true
+    },
+    {
+      "input": "docx",
+      "output": "md",
+      "filename": "validation (1).md",
+      "bytes": 66,
+      "sha256": "f911d6d4864dc4e2939235286192ab5e813fb73bb87245dcf298d131514c64de",
+      "validated": true
+    },
+    {
+      "input": "mht",
+      "output": "xlsx",
+      "filename": "validation (1).xlsx",
+      "bytes": 5126,
+      "sha256": "94c7f7b991d1905a916d0569cf42babc9dc2d5660cf22729c1ba5bda8c3778a5",
+      "validated": true
+    },
+    {
+      "input": "mhtml",
+      "output": "xlsx",
+      "filename": "validation (2).xlsx",
+      "bytes": 5125,
+      "sha256": "bfbb0bf10f40271b910f363a38f1a630f903bc70e4631c9ec918c040d13e949d",
+      "validated": true
+    }
+  ]
+}

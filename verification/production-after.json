@@ -1,0 +1,101 @@
+{
+  "url": "https://the-convert-lab.onrender.com",
+  "endpoints": {
+    "health": {
+      "status": "ok"
+    },
+    "formats": {
+      "pdf": [
+        "md",
+        "docx",
+        "xlsx",
+        "pptx"
+      ],
+      "docx": [
+        "md"
+      ],
+      "mht": [
+        "xlsx"
+      ],
+      "mhtml": [
+        "xlsx"
+      ]
+    },
+    "config": {
+      "max_file_size_mb": 25,
+      "max_pdf_pages": 150,
+      "timeout_seconds": 120
+    }
+  },
+  "conversions": [
+    {
+      "input": "pdf",
+      "output": "md",
+      "http": 200,
+      "bytes": 103,
+      "seconds": 35.55,
+      "warnings": [],
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "docx",
+      "http": 200,
+      "bytes": 37179,
+      "seconds": 12.93,
+      "warnings": [
+        "Layouts complexos podem apresentar diferenças de espaçamento e tipografia."
+      ],
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "xlsx",
+      "http": 200,
+      "bytes": 5160,
+      "seconds": 7.33,
+      "warnings": [
+        "Confira a estrutura e os valores extraídos, especialmente em tabelas sem bordas ou com células mescladas."
+      ],
+      "validated": true
+    },
+    {
+      "input": "pdf",
+      "output": "pptx",
+      "http": 200,
+      "bytes": 41335,
+      "seconds": 6.93,
+      "warnings": [
+        "1 página(s) inserida(s) como imagem para preservar o layout (páginas: 2). Essas páginas não têm objetos editáveis."
+      ],
+      "validated": true
+    },
+    {
+      "input": "docx",
+      "output": "md",
+      "http": 200,
+      "bytes": 66,
+      "seconds": 7.71,
+      "warnings": [],
+      "validated": true
+    },
+    {
+      "input": "mht",
+      "output": "xlsx",
+      "http": 200,
+      "bytes": 5125,
+      "seconds": 7.29,
+      "warnings": [],
+      "validated": true
+    },
+    {
+      "input": "mhtml",
+      "output": "xlsx",
+      "http": 200,
+      "bytes": 5126,
+      "seconds": 7.28,
+      "warnings": [],
+      "validated": true
+    }
+  ]
+}
