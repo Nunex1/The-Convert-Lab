@@ -1,0 +1,15 @@
+{
+  "python": "3.13.16",
+  "platform": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+  "licensed": false,
+  "authentic_binary": true,
+  "independent_reader": "pyxlsb 1.0.10",
+  "values_match": true,
+  "formula_preserved_engine_reopen": true,
+  "source_sheets": 2,
+  "result_sheets": 3,
+  "seconds": 0.9059907219999559,
+  "bytes": 6799,
+  "production_acceptable": false,
+  "output_deleted": true
+}

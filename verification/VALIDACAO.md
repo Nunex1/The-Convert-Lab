@@ -1,5 +1,7 @@
 # Validação da restauração — 10/10/2026
 
+> Evolução em 14/10/2026: [CSV, integração XLSB condicionada, animações e benchmarks](EVOLUCAO-PLANILHAS.md). O relatório abaixo registra a entrega anterior; a nova branch não foi publicada em produção.
+
 ## Diagnóstico reproduzido
 
 Base: `406f855a0c6c8837a90b61ec8ea1163210dc4469`, branch `main`.

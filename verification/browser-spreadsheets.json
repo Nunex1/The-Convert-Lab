@@ -1,0 +1,22 @@
+[
+  {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1100,
+    "motion": "no-preference",
+    "elapsed_ms": 887.8326000000002,
+    "download": "browser.csv",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "width": 390,
+    "height": 844,
+    "motion": "reduce",
+    "elapsed_ms": 1398.9920999999995,
+    "download": "browser.csv",
+    "overflow": false,
+    "errors": []
+  }
+]

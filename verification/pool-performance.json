@@ -1,0 +1,48 @@
+{
+  "warning": "Experimental reuse has NO per-job hard cancellation, memory reset or fault containment. Not used by API.",
+  "runs": [
+    {
+      "seconds": 1.3480982889999495,
+      "resident_mb": 56.03515625
+    },
+    {
+      "seconds": 0.3259127560000934,
+      "resident_mb": 56.03125
+    },
+    {
+      "seconds": 0.27130414199996267,
+      "resident_mb": 66.14453125
+    },
+    {
+      "seconds": 0.33597149499996704,
+      "resident_mb": 58.88671875
+    },
+    {
+      "seconds": 0.3396003610000662,
+      "resident_mb": 66.19921875
+    },
+    {
+      "seconds": 0.2865136599999687,
+      "resident_mb": 66.88671875
+    },
+    {
+      "seconds": 0.38103330699993876,
+      "resident_mb": 62.8671875
+    },
+    {
+      "seconds": 0.3080559429999994,
+      "resident_mb": 66.16796875
+    },
+    {
+      "seconds": 0.347574547000022,
+      "resident_mb": 64.80078125
+    },
+    {
+      "seconds": 0.25411317799989774,
+      "resident_mb": 66.39453125
+    }
+  ],
+  "first_seconds": 1.3480982889999495,
+  "warm_median_seconds": 0.3259127560000934,
+  "warm_p95_seconds": 0.38103330699993876
+}

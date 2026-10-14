@@ -1,0 +1,399 @@
+{
+  "python": "3.13.16",
+  "platform": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+  "sampling_ms": 5,
+  "runs": 5,
+  "cases": {
+    "python_start": [
+      {
+        "seconds": 0.03397759099993891,
+        "peak_rss_mb": 8.9765625
+      },
+      {
+        "seconds": 0.02836451199982548,
+        "peak_rss_mb": 8.99609375
+      },
+      {
+        "seconds": 0.027956484000014825,
+        "peak_rss_mb": 8.390625
+      },
+      {
+        "seconds": 0.028196801000149208,
+        "peak_rss_mb": 8.89453125
+      },
+      {
+        "seconds": 0.028813542000079906,
+        "peak_rss_mb": 8.8515625
+      }
+    ],
+    "worker_import": [
+      {
+        "seconds": 0.4049932020000142,
+        "peak_rss_mb": 21.1640625
+      },
+      {
+        "seconds": 0.46504835099995034,
+        "peak_rss_mb": 21.12890625
+      },
+      {
+        "seconds": 0.4159669519999625,
+        "peak_rss_mb": 21.1328125
+      },
+      {
+        "seconds": 0.3945865960001811,
+        "peak_rss_mb": 21.06640625
+      },
+      {
+        "seconds": 0.44637325300004704,
+        "peak_rss_mb": 21.08203125
+      }
+    ],
+    "sample.docx->md": [
+      {
+        "seconds": 1.310277756000005,
+        "peak_rss_mb": 51.85546875,
+        "output_bytes": 5089,
+        "stages": {
+          "worker_import": 269.3683029999647,
+          "input_validation": 71.76413700017292,
+          "converter_import": 453.35076500009563,
+          "conversion": 280.0805350000246,
+          "result_validation": 0.09180500001093606
+        }
+      },
+      {
+        "seconds": 1.2103234549999797,
+        "peak_rss_mb": 51.41015625,
+        "output_bytes": 5089,
+        "stages": {
+          "worker_import": 328.9494209998338,
+          "input_validation": 82.77438700019957,
+          "converter_import": 334.21253100004833,
+          "conversion": 229.49014899995746,
+          "result_validation": 0.08900499983610644
+        }
+      },
+      {
+        "seconds": 1.2882544550000148,
+        "peak_rss_mb": 51.53515625,
+        "output_bytes": 5089,
+        "stages": {
+          "worker_import": 317.2275280001031,
+          "input_validation": 81.11108799994327,
+          "converter_import": 346.0968330000469,
+          "conversion": 309.37336500005586,
+          "result_validation": 0.09120499998971354
+        }
+      },
+      {
+        "seconds": 1.4235312410000915,
+        "peak_rss_mb": 51.7421875,
+        "output_bytes": 5089,
+        "stages": {
+          "worker_import": 325.50641700004235,
+          "input_validation": 72.37617300006605,
+          "converter_import": 400.7997629998954,
+          "conversion": 325.46471399996335,
+          "result_validation": 0.1508089999333606
+        }
+      },
+      {
+        "seconds": 1.19607651299998,
+        "peak_rss_mb": 51.70703125,
+        "output_bytes": 5089,
+        "stages": {
+          "worker_import": 271.07940399992003,
+          "input_validation": 76.05049000017061,
+          "converter_import": 421.26146999999037,
+          "conversion": 230.8490289999554,
+          "result_validation": 0.07740500018371677
+        }
+      }
+    ],
+    "sample.pdf->pptx": [
+      {
+        "seconds": 0.9939216479999686,
+        "peak_rss_mb": 78.51171875,
+        "output_bytes": 28365,
+        "stages": {
+          "worker_import": 282.87589999990814,
+          "input_validation": 274.2636919999768,
+          "converter_import": 207.22756500003925,
+          "conversion": 22.243203000016365,
+          "result_validation": 4.847606000112137
+        }
+      },
+      {
+        "seconds": 0.9387585120000494,
+        "peak_rss_mb": 78.48828125,
+        "output_bytes": 28365,
+        "stages": {
+          "worker_import": 241.82165299998815,
+          "input_validation": 252.2418099999868,
+          "converter_import": 211.39823400017121,
+          "conversion": 30.349213999897984,
+          "result_validation": 4.9638130001312675
+        }
+      },
+      {
+        "seconds": 1.010852358999955,
+        "peak_rss_mb": 78.484375,
+        "output_bytes": 28365,
+        "stages": {
+          "worker_import": 277.42619799983004,
+          "input_validation": 268.71244900007696,
+          "converter_import": 197.5518600002033,
+          "conversion": 23.161261000041122,
+          "result_validation": 4.8094029998537735
+        }
+      },
+      {
+        "seconds": 0.9586485659999653,
+        "peak_rss_mb": 78.7265625,
+        "output_bytes": 28365,
+        "stages": {
+          "worker_import": 240.26145400011956,
+          "input_validation": 252.56533000015224,
+          "converter_import": 197.52345899996726,
+          "conversion": 26.125148000119225,
+          "result_validation": 5.038217999981498
+        }
+      },
+      {
+        "seconds": 1.1133049219999975,
+        "peak_rss_mb": 78.52734375,
+        "output_bytes": 28365,
+        "stages": {
+          "worker_import": 269.53600100000585,
+          "input_validation": 276.5995469999325,
+          "converter_import": 220.5036079999445,
+          "conversion": 27.5291370001014,
+          "result_validation": 4.979413999990356
+        }
+      }
+    ],
+    "100.xlsx->csv": [
+      {
+        "seconds": 1.092268494999871,
+        "peak_rss_mb": 49.17578125,
+        "output_bytes": 4480,
+        "stages": {
+          "worker_import": 331.4937079999254,
+          "input_validation": 19.868653000003178,
+          "converter_import": 500.86999299992385,
+          "conversion": 22.762235999834957,
+          "result_validation": 1.9304209999972954
+        }
+      },
+      {
+        "seconds": 1.104664275999994,
+        "peak_rss_mb": 49.328125,
+        "output_bytes": 4480,
+        "stages": {
+          "worker_import": 270.14973900008954,
+          "input_validation": 28.23858100009602,
+          "converter_import": 557.2338469999067,
+          "conversion": 21.372147999954905,
+          "result_validation": 1.8619180000314373
+        }
+      },
+      {
+        "seconds": 0.986129099999971,
+        "peak_rss_mb": 49.27734375,
+        "output_bytes": 4480,
+        "stages": {
+          "worker_import": 252.77774400001363,
+          "input_validation": 20.05906599993068,
+          "converter_import": 502.86311799982286,
+          "conversion": 23.438877999979013,
+          "result_validation": 1.9749250000131724
+        }
+      },
+      {
+        "seconds": 0.9949134389999017,
+        "peak_rss_mb": 49.53515625,
+        "output_bytes": 4480,
+        "stages": {
+          "worker_import": 263.94044800008487,
+          "input_validation": 18.981097000050795,
+          "converter_import": 509.684229999948,
+          "conversion": 19.251242999871465,
+          "result_validation": 1.6834079999625828
+        }
+      },
+      {
+        "seconds": 1.1224012730001505,
+        "peak_rss_mb": 49.0625,
+        "output_bytes": 4480,
+        "stages": {
+          "worker_import": 288.1149029999506,
+          "input_validation": 22.759569000072588,
+          "converter_import": 565.796033999959,
+          "conversion": 21.524289999888424,
+          "result_validation": 1.683707999973194
+        }
+      }
+    ],
+    "10000.xlsx->csv": [
+      {
+        "seconds": 3.883780574000184,
+        "peak_rss_mb": 50.890625,
+        "output_bytes": 487780,
+        "stages": {
+          "worker_import": 385.06976400003623,
+          "input_validation": 869.7783609998169,
+          "converter_import": 601.5947450000567,
+          "conversion": 1805.1802590000534,
+          "result_validation": 22.532855000008567
+        }
+      },
+      {
+        "seconds": 3.399794307000093,
+        "peak_rss_mb": 50.59765625,
+        "output_bytes": 487780,
+        "stages": {
+          "worker_import": 265.75936000017464,
+          "input_validation": 821.9489719999729,
+          "converter_import": 492.0789729999342,
+          "conversion": 1598.5462809999262,
+          "result_validation": 26.619125000024724
+        }
+      },
+      {
+        "seconds": 3.525456492999865,
+        "peak_rss_mb": 51.11328125,
+        "output_bytes": 487780,
+        "stages": {
+          "worker_import": 301.20031300020855,
+          "input_validation": 683.4101739998459,
+          "converter_import": 614.823030000025,
+          "conversion": 1725.2042659999915,
+          "result_validation": 24.181265999914103
+        }
+      },
+      {
+        "seconds": 3.295837216999871,
+        "peak_rss_mb": 50.6640625,
+        "output_bytes": 487780,
+        "stages": {
+          "worker_import": 238.4372470000926,
+          "input_validation": 635.883695000075,
+          "converter_import": 550.1893440000458,
+          "conversion": 1658.3742360000997,
+          "result_validation": 28.570151000167243
+        }
+      },
+      {
+        "seconds": 3.2262029250000523,
+        "peak_rss_mb": 50.7109375,
+        "output_bytes": 487780,
+        "stages": {
+          "worker_import": 244.80434300016896,
+          "input_validation": 649.4363079998493,
+          "converter_import": 513.5540599999331,
+          "conversion": 1616.5075639999031,
+          "result_validation": 20.213301000012507
+        }
+      }
+    ],
+    "100000.xlsx->csv": [
+      {
+        "seconds": 26.030749797,
+        "peak_rss_mb": 65.765625,
+        "output_bytes": 5077780,
+        "stages": {
+          "worker_import": 246.47336699990774,
+          "input_validation": 7166.9267160000345,
+          "converter_import": 576.7362990000038,
+          "conversion": 17543.778739000118,
+          "result_validation": 207.93994199993904
+        }
+      },
+      {
+        "seconds": 26.22124348500006,
+        "peak_rss_mb": 66.13671875,
+        "output_bytes": 5077780,
+        "stages": {
+          "worker_import": 261.79232300000876,
+          "input_validation": 7623.497436999969,
+          "converter_import": 540.3368570000566,
+          "conversion": 17315.570607000154,
+          "result_validation": 203.94640099993921
+        }
+      },
+      {
+        "seconds": 25.29149633599991,
+        "peak_rss_mb": 66.10546875,
+        "output_bytes": 5077780,
+        "stages": {
+          "worker_import": 265.2435680001872,
+          "input_validation": 6936.057699000003,
+          "converter_import": 556.8082449999565,
+          "conversion": 16891.219247999972,
+          "result_validation": 318.1894030001331
+        }
+      },
+      {
+        "seconds": 24.817649673000005,
+        "peak_rss_mb": 66.29296875,
+        "output_bytes": 5077780,
+        "stages": {
+          "worker_import": 289.86617100008516,
+          "input_validation": 6652.289289999999,
+          "converter_import": 526.7827130001024,
+          "conversion": 16885.06346999998,
+          "result_validation": 201.35914200000116
+        }
+      },
+      {
+        "seconds": 24.64570565600002,
+        "peak_rss_mb": 65.85546875,
+        "output_bytes": 5077780,
+        "stages": {
+          "worker_import": 241.4681400000518,
+          "input_validation": 6643.935143999897,
+          "converter_import": 494.33301999988544,
+          "conversion": 16798.795187999986,
+          "result_validation": 207.81926299991937
+        }
+      }
+    ]
+  },
+  "summary": {
+    "python_start": {
+      "median_seconds": 0.02836451199982548,
+      "p95_seconds": 0.03397759099993891,
+      "max_rss_mb": 8.99609375
+    },
+    "worker_import": {
+      "median_seconds": 0.4159669519999625,
+      "p95_seconds": 0.46504835099995034,
+      "max_rss_mb": 21.1640625
+    },
+    "sample.docx->md": {
+      "median_seconds": 1.2882544550000148,
+      "p95_seconds": 1.4235312410000915,
+      "max_rss_mb": 51.85546875
+    },
+    "sample.pdf->pptx": {
+      "median_seconds": 0.9939216479999686,
+      "p95_seconds": 1.1133049219999975,
+      "max_rss_mb": 78.7265625
+    },
+    "100.xlsx->csv": {
+      "median_seconds": 1.092268494999871,
+      "p95_seconds": 1.1224012730001505,
+      "max_rss_mb": 49.53515625
+    },
+    "10000.xlsx->csv": {
+      "median_seconds": 3.399794307000093,
+      "p95_seconds": 3.883780574000184,
+      "max_rss_mb": 51.11328125
+    },
+    "100000.xlsx->csv": {
+      "median_seconds": 25.29149633599991,
+      "p95_seconds": 26.22124348500006,
+      "max_rss_mb": 66.29296875
+    }
+  }
+}

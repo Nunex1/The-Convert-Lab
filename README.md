@@ -64,6 +64,10 @@ Os containers executam sem root. O backend tem filesystem somente leitura, tempo
 | PDF | Excel | Detecção por linhas; tentativa por alinhamento de texto quando necessário |
 | PDF | PowerPoint | Texto simples como objetos editáveis; layouts complexos como imagem de página |
 | MHT / MHTML | Excel | MIME → HTML principal → tabelas → células tipadas e formatadas |
+| XLSX | CSV | Leitura incremental, uma aba, delimitador/BOM e proteção configuráveis |
+| XLSX | XLSB (opcional) | Aspose licenciado e validado; desabilitado por padrão |
+
+CSV exporta a primeira aba ou o nome informado, usa valores calculados salvos e avisa sobre perdas e proteção de fórmulas. XLSB requer instalação opcional e licença válida; não há entrega de arquivos de avaliação. Consulte [o relatório de implementação, benchmarks e limites](verification/EVOLUCAO-PLANILHAS.md).
 
 Todas as saídas são reabertas/validadas no servidor antes de serem enviadas. Não há mudança artificial de extensão, conversão simulada ou resposta de exemplo no fluxo principal. Os arquivos sintéticos dos testes servem exclusivamente para verificação.
 
