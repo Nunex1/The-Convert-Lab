@@ -2,7 +2,6 @@ from email import policy
 from email.parser import BytesParser
 from pathlib import Path
 import zipfile
-import pymupdf
 from defusedxml import ElementTree
 from backend.config import MAX_FILE_SIZE, MAX_FILE_SIZE_MB, MAX_PAGES
 from backend.services.errors import ConversionError
@@ -10,6 +9,7 @@ from backend.services.errors import ConversionError
 ALLOWED_MIMES = {
     'pdf': {'application/pdf'},
     'docx': {'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'},
+    'xlsx': {'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip'},
     'mht': {'message/rfc822', 'multipart/related', 'application/x-mimearchive', 'application/x-mime'},
     'mhtml': {'message/rfc822', 'multipart/related', 'application/x-mimearchive', 'application/x-mime'},
 }
@@ -42,6 +42,7 @@ def validate_file(path: Path, extension: str, content_type: str | None) -> None:
         raise ConversionError('O tipo de conteúdo não corresponde ao formato do arquivo.')
     try:
         if extension == 'pdf':
+            import pymupdf
             with path.open('rb') as handle:
                 if not handle.read(8).startswith(b'%PDF-'):
                     raise ConversionError('O arquivo não possui uma assinatura PDF válida.')
@@ -50,6 +51,9 @@ def validate_file(path: Path, extension: str, content_type: str | None) -> None:
                     raise ConversionError('Este PDF está protegido por senha. Envie uma cópia desbloqueada.')
                 if not 0 < len(doc) <= MAX_PAGES:
                     raise ConversionError(f'O PDF deve conter entre 1 e {MAX_PAGES} páginas.')
+        elif extension == 'xlsx':
+            from backend.services.spreadsheet_validator import validate_xlsx
+            validate_xlsx(path)
         elif extension == 'docx':
             with zipfile.ZipFile(path) as archive:
                 members = archive.infolist()

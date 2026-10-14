@@ -8,10 +8,12 @@ from fastapi.responses import JSONResponse
 from backend.api.routes import router
 from backend.config import MAX_FILE_SIZE, MAX_FILE_SIZE_MB
 from backend.services.temporary_files import cleanup_stale
+from backend.services.capabilities import available_formats
 
 
 @asynccontextmanager
 async def lifespan(app):
+    await asyncio.to_thread(available_formats)
     cleanup_stale()
     async def sweeper():
         while True:

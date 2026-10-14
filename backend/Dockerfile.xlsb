@@ -1,0 +1,8 @@
+# Optional licensed deployment. Build backend/Dockerfile first with this tag.
+ARG BASE_IMAGE=convertlab-backend:latest
+FROM ${BASE_IMAGE}
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends libicu76 libssl3t64 libgdiplus libfontconfig1 && rm -rf /var/lib/apt/lists/*
+ENV CLR_ICU_VERSION_OVERRIDE=76 XDG_CACHE_HOME=/tmp/font-cache
+RUN pip install -r /app/backend/requirements-xlsb.txt
+USER converter

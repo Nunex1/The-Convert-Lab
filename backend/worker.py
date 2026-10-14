@@ -5,6 +5,9 @@ import os
 from pathlib import Path
 import re
 import sys
+import time
+
+BOOT_STARTED = time.perf_counter()
 
 from backend.config import FORMATS, TEMP_ROOT
 from backend.converters.registry import get_converter
@@ -41,6 +44,7 @@ def write_status(job: Path, status: dict) -> None:
 
 def run(job: Path) -> int:
     target = None
+    timings = {'worker_import': (time.perf_counter() - BOOT_STARTED) * 1000}
     try:
         request_path = job / 'request.json'
         if not regular_file(request_path) or request_path.stat().st_size > 4096:
@@ -54,7 +58,8 @@ def run(job: Path) -> int:
         source_format, output_format = request.get('input'), request.get('output')
         mime = request.get('mime')
         if (not isinstance(source_format, str) or source_format not in FORMATS
-                or not isinstance(output_format, str) or output_format not in FORMATS[source_format]):
+                or not isinstance(output_format, str) or (output_format not in FORMATS[source_format]
+                and not (source_format == 'xlsx' and output_format == 'xlsb' and os.getenv('ENABLE_XLSB') == '1'))):
             raise ConversionError('Esta combinação de formatos não é suportada.')
         if mime is not None and not isinstance(mime, str):
             raise ConversionError('O tipo de conteúdo informado é inválido.')
@@ -65,12 +70,27 @@ def run(job: Path) -> int:
         if candidate.exists() or candidate.is_symlink():
             raise ConversionError('A solicitação de conversão já possui um resultado.')
         target = candidate
+        stage = time.perf_counter()
         validate_file(source, source_format, mime)
-        warnings = get_converter(source_format, output_format)(source, target)
-        validate_result(target, output_format)
+        timings['input_validation'] = (time.perf_counter() - stage) * 1000
+        stage = time.perf_counter()
+        converter = get_converter(source_format, output_format)
+        timings['converter_import'] = (time.perf_counter() - stage) * 1000
+        stage = time.perf_counter()
+        if source_format == 'xlsx' and output_format == 'csv':
+            warnings = converter(source, target, request.get('csv_options'))
+        else:
+            warnings = converter(source, target)
+        timings['conversion'] = (time.perf_counter() - stage) * 1000
+        stage = time.perf_counter()
+        if output_format == 'csv':
+            validate_result(target, output_format, delimiter=(request.get('csv_options') or {}).get('delimiter', ';'))
+        else:
+            validate_result(target, output_format)
+        timings['result_validation'] = (time.perf_counter() - stage) * 1000
         if not isinstance(warnings, list) or not all(isinstance(w, str) for w in warnings):
             raise TypeError('Invalid converter warnings')
-        status, exit_code = {'ok': True, 'warnings': warnings}, 0
+        status, exit_code = {'ok': True, 'warnings': warnings, 'timings_ms': timings}, 0
     except ConversionError as error:
         status, exit_code = {'ok': False, 'code': 'CONVERSION_ERROR', 'message': str(error)}, 1
     except Exception as error:

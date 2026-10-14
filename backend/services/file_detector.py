@@ -8,7 +8,7 @@ from backend.services.errors import ConversionError
 def detect_extension(filename: str) -> str:
     extension = PurePosixPath(filename.replace('\\', '/')).suffix.lower().lstrip('.')
     if extension not in FORMATS:
-        raise ConversionError('Este formato ainda não é suportado. Use PDF, DOCX, MHT ou MHTML.')
+        raise ConversionError('Este formato ainda não é suportado. Use PDF, DOCX, MHT, MHTML ou XLSX.')
     return extension
 
 
