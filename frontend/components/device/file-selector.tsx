@@ -101,7 +101,7 @@ export function FileSelector({
             <span>
               ou <u>selecione do computador</u>
             </span>
-            <small>PDF, DOCX, MHT ou MHTML</small>
+            <small>PDF, DOCX, MHT, MHTML ou XLSX</small>
           </button>
         )}
       </div>

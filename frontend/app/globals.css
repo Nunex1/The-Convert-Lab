@@ -63,6 +63,8 @@ button {
   color: inherit;
 }
 button:focus-visible,
+input:focus-visible,
+select:focus-visible,
 a:focus-visible,
 summary:focus-visible,
 pre:focus-visible {
@@ -496,6 +498,7 @@ fieldset {
   color: #8a9fb1;
 }
 .document-glyph {
+  position: relative;
   height: 62px;
   width: 54px;
   display: flex;
@@ -509,6 +512,24 @@ fieldset {
   margin-top: 5px;
   letter-spacing: 1px;
 }
+.document-scan { position: absolute; inset: 0; border-radius: 8px; overflow: hidden; }
+.document-scan::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #e77e86; box-shadow: 0 0 14px #cc465e; animation: document-scan 1.8s ease-in-out infinite; }
+.format-transition { display: flex; align-items: center; gap: 5px; position: absolute; bottom: -13px; font: 8px var(--mono); color: #d8abb1; }
+.screen-selected .document-glyph { animation: document-arrive .35s ease-out; }
+.screen-processing .document-glyph { animation: document-breathe 2.4s ease-in-out infinite; }
+.screen-uploading .orbit-corner { animation: document-breathe 1.8s ease-in-out infinite; }
+.screen-receiving .document-scan::after { animation-direction: reverse; background: #83d6b0; }
+.screen-success .document-glyph { animation: document-arrive .45s ease-out; }
+@keyframes document-scan { 0%, 100% { transform: translateY(4px); opacity: .3; } 50% { transform: translateY(55px); opacity: 1; } }
+@keyframes document-breathe { 0%, 100% { opacity: .65; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+@keyframes document-arrive { from { opacity: .2; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.csv-options { border: 1px solid var(--border, #68717b); border-radius: 10px; padding: 12px; margin: 14px 0; font-size: 12px; }
+.csv-options legend { padding: 0 6px; font-weight: 600; }
+.csv-options summary { cursor: pointer; padding: 8px 0; }
+.csv-options p { font-size: 11px; line-height: 1.6; margin: 6px 0 10px; opacity: .85; }
+.csv-options label { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.csv-options input:not([type="checkbox"]), .csv-options select { width: 100%; min-height: 36px; border: 1px solid #68717b; border-radius: 5px; padding: 6px; background: var(--surface, #20262c); color: inherit; font: inherit; }
+.csv-options .csv-check { flex-direction: row; align-items: center; }
 .orbit-corner {
   position: absolute;
   width: 12px;

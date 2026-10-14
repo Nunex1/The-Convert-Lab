@@ -2,21 +2,25 @@ export const BRAND = "ConvertLab";
 export const API_URL = (
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
 ).replace(/\/$/, "");
-export type OutputFormat = "md" | "docx" | "xlsx" | "pptx";
+export type OutputFormat = "md" | "docx" | "xlsx" | "pptx" | "csv" | "xlsb";
 export type FormatMap = Record<string, OutputFormat[]>;
 export const FORMAT_NAMES: Record<OutputFormat, string> = {
   md: "Markdown",
   docx: "Word",
   xlsx: "Excel",
   pptx: "PowerPoint",
+  csv: "CSV",
+  xlsb: "Excel binário",
 };
 export const FORMAT_DETAILS: Record<OutputFormat, string> = {
   md: "Texto estruturado",
   docx: "Documento editável",
   xlsx: "Dados e tabelas",
   pptx: "Apresentação",
+  csv: "Uma aba em texto",
+  xlsb: "Planilha binária",
 };
-export const ACCEPTED = ".pdf,.docx,.mht,.mhtml";
+export const ACCEPTED = ".pdf,.docx,.mht,.mhtml,.xlsx";
 export function fileSize(bytes: number) {
   return bytes >= 1024 * 1024
     ? `${(bytes / 1024 / 1024).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} MB`

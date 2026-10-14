@@ -14,6 +14,9 @@ export type ServerConfig = {
   max_pdf_pages: number;
 };
 
+export type CsvOptions = { delimiter: ";" | ","; bom: boolean; sheet: string; protect_formulas: boolean };
+export const DEFAULT_CSV_OPTIONS: CsvOptions = { delimiter: ";", bom: false, sheet: "", protect_formulas: true };
+
 export async function getCapabilities(
   signal: AbortSignal,
 ): Promise<{ formats: FormatMap; config: ServerConfig }> {
@@ -38,6 +41,7 @@ export function convertFile(
   onUpload: (percent: number) => void,
   onProcessing: () => void,
   onDownload: () => void,
+  csvOptions: CsvOptions = DEFAULT_CSV_OPTIONS,
 ) {
   const xhr = new XMLHttpRequest();
   const promise = new Promise<ConversionResult>((resolve, reject) => {
@@ -112,6 +116,7 @@ export function convertFile(
     const body = new FormData();
     body.append("file", file);
     body.append("output_format", output);
+    if (output === "csv") body.append("csv_options", JSON.stringify(csvOptions));
     xhr.send(body);
   });
   return { promise, abort: () => xhr.abort() };

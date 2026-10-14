@@ -60,6 +60,7 @@ export default function Home() {
             ["PDF", ["Markdown", "Word", "Excel", "PowerPoint"]],
             ["DOCX", ["Markdown"]],
             ["MHT / MHTML", ["Excel"]],
+            ["XLSX", ["CSV (uma aba)"]],
           ].map(([input, outputs]) => (
             <div className="format-table-row" key={input as string}>
               <strong>
