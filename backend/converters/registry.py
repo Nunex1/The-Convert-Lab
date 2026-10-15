@@ -1,6 +1,8 @@
 from importlib import import_module
 
 CONVERTERS = {
+    ('xlsx', 'csv'): 'xlsx.xlsx_to_csv',
+    ('xlsx', 'xlsb'): 'xlsx.xlsx_to_xlsb',
     ('pdf', 'md'): 'pdf.pdf_to_markdown',
     ('docx', 'md'): 'docx.docx_to_markdown',
     ('mht', 'xlsx'): 'mht.mht_to_excel',

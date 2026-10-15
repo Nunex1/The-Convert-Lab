@@ -2,7 +2,7 @@ from pathlib import Path
 from backend.services.errors import ConversionError
 
 
-def validate_result(path: Path, extension: str) -> None:
+def validate_result(path: Path, extension: str, *, delimiter: str = ';') -> None:
     if not path.exists() or path.stat().st_size == 0:
         raise ConversionError('A conversão não produziu conteúdo utilizável.')
     if path.stat().st_size > 150 * 1024 * 1024:
@@ -25,3 +25,13 @@ def validate_result(path: Path, extension: str) -> None:
         from pptx import Presentation
         if not Presentation(path).slides:
             raise ConversionError('Não foi possível gerar slides deste documento.')
+    elif extension == 'csv':
+        import csv
+        csv.field_size_limit(1024 * 1024)
+        with path.open(encoding='utf-8-sig', newline='') as stream:
+            for row in csv.reader(stream, delimiter=delimiter, strict=True):
+                if any('\x00' in cell for cell in row):
+                    raise ConversionError('O CSV contém caracteres inválidos.')
+    elif extension == 'xlsb':
+        from backend.converters.xlsx.xlsx_to_xlsb import validate_xlsb
+        validate_xlsb(path)

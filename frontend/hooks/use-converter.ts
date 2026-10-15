@@ -6,6 +6,8 @@ import {
   getCapabilities,
   type ConversionResult,
   type ServerConfig,
+  DEFAULT_CSV_OPTIONS,
+  type CsvOptions,
 } from "@/services/api";
 
 export type Phase =
@@ -31,6 +33,7 @@ export function useConverter() {
   const [output, setOutput] = useState<OutputFormat | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [upload, setUpload] = useState(0);
+  const [csvOptions, setCsvOptions] = useState<CsvOptions>(DEFAULT_CSV_OPTIONS);
   const [error, setError] = useState("");
   const [result, setResult] = useState<ConversionResult | null>(null);
   const resultRef = useRef<ConversionResult | null>(null);
@@ -42,7 +45,9 @@ export function useConverter() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    // A sleeping Render instance can take about a minute to start. One bounded
+    // request per user visit/retry; this is not a background keep-alive.
+    const timeout = setTimeout(() => controller.abort(), 90000);
     let current = true;
     setConnection("loading");
     getCapabilities(controller.signal)
@@ -108,7 +113,7 @@ export function useConverter() {
       setPhase("error");
       setError(
         !formats[extension]
-          ? "Este formato ainda não é suportado. Use PDF, DOCX, MHT ou MHTML."
+          ? `Este formato ainda não é suportado. Use ${Object.keys(formats).join(", ").toUpperCase()}.`
           : candidate.size === 0
             ? "O arquivo está vazio. Selecione outro documento."
             : `O arquivo excede o limite de ${config.max_file_size_mb} MB.`,
@@ -116,6 +121,7 @@ export function useConverter() {
       return;
     }
     setFile(candidate);
+    setCsvOptions(DEFAULT_CSV_OPTIONS);
     setOutput(formats[extension].length === 1 ? formats[extension][0] : null);
     setPhase("selected");
   }
@@ -140,9 +146,10 @@ export function useConverter() {
       file,
       output,
       config.timeout_seconds,
-      setUpload,
-      () => setPhase("processing"),
-      () => setPhase("receiving"),
+      (value) => { if (current === revision.current) setUpload(value); },
+      () => { if (current === revision.current) setPhase("processing"); },
+      () => { if (current === revision.current) setPhase("receiving"); },
+      csvOptions,
     );
     job.current = request;
     try {
@@ -187,6 +194,8 @@ export function useConverter() {
     convert,
     reset,
     reconnect: () => setRetry((value) => value + 1),
+    csvOptions,
+    setCsvOptions: (value: CsvOptions) => { if (!busyRef.current) { clearResult(); setCsvOptions(value); setPhase("selected"); } },
   };
 }
 export type ConverterState = ReturnType<typeof useConverter>;

@@ -39,6 +39,7 @@ export function ConversionScreen({ state }: { state: ConverterState }) {
           <span className="orbit-corner bl" />
           <span className="orbit-corner br" />
           <div className="document-glyph">
+            {busy && <span className="document-scan" />}
             {phase === "success" ? (
               <Check size={45} strokeWidth={1.3} />
             ) : phase === "error" ? (
@@ -52,10 +53,12 @@ export function ConversionScreen({ state }: { state: ConverterState }) {
           <span className="glyph-caption">
             {phase === "success"
               ? result?.format.toUpperCase()
+              : phase === "receiving" ? output?.toUpperCase()
               : file
                 ? input.toUpperCase()
                 : "FILE / IN"}
           </span>
+          {busy && <span className="format-transition">{input.toUpperCase()} <ArrowRight size={10} /> {output?.toUpperCase()}</span>}
         </div>
         <div className="screen-message" aria-live="polite" aria-atomic="true">
           <h2>{title}</h2>
@@ -65,7 +68,7 @@ export function ConversionScreen({ state }: { state: ConverterState }) {
               : phase === "success"
                 ? "Um novo formato. Todas as possibilidades."
                 : busy
-                  ? "Pode deixar com a gente."
+                  ? phase === "uploading" ? "Enviando o documento com segurança." : phase === "receiving" ? "Recebendo o arquivo validado." : "Conversão em andamento. O servidor não informa um percentual nesta etapa."
                   : file
                     ? "Escolha o formato de saída e inicie a conversão."
                     : "Seu próximo formato começa aqui."}
@@ -91,6 +94,7 @@ export function ConversionScreen({ state }: { state: ConverterState }) {
             <span>DOCX</span>
             <span>MHT</span>
             <span>MHTML</span>
+            <span>XLSX</span>
           </div>
         )}
       </div>

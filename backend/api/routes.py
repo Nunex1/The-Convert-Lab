@@ -13,6 +13,7 @@ from backend.config import FORMATS, MIMES, MAX_FILE_SIZE, MAX_FILE_SIZE_MB, MAX_
 from backend.services.file_detector import detect_extension, output_name
 from backend.services.errors import ConversionError
 from backend.services.temporary_files import cleanup_job
+from backend.services.capabilities import available_formats
 
 router = APIRouter(prefix='/api')
 slots = asyncio.Semaphore(MAX_CONCURRENT)
@@ -57,7 +58,7 @@ class TemporaryFileResponse(FileResponse):
 
 @router.get('/formats')
 def formats():
-    return FORMATS
+    return available_formats()
 
 
 @router.get('/config')
@@ -71,31 +72,45 @@ def health():
 
 
 @router.post('/convert')
-async def convert(request: Request, file: UploadFile = File(...), output_format: str = Form(...)):
+async def convert(request: Request, file: UploadFile = File(...), output_format: str = Form(...), csv_options: str = Form('{}')):
     job = None
     process = None
     acquired = False
     response_owns_job = False
     started = time.monotonic()
+    timings = {}
     try:
         input_format = detect_extension(file.filename or '')
-        if output_format not in FORMATS[input_format]:
+        if output_format not in available_formats()[input_format]:
             raise HTTPException(400, 'Esta combinação de formatos não é suportada.')
+        options = None
+        if output_format == 'csv':
+            from backend.services.csv_options import normalize_options
+            try:
+                if len(csv_options) > 1024:
+                    raise ValueError()
+                options = normalize_options(json.loads(csv_options))
+            except (ValueError, TypeError):
+                raise HTTPException(400, 'As opções de exportação CSV são inválidas.') from None
         try:
             await asyncio.wait_for(slots.acquire(), timeout=0.1)
             acquired = True
+            timings['capacity_wait'] = (time.monotonic() - started) * 1000
         except TimeoutError:
             raise HTTPException(429, 'Todos os conversores estão ocupados. Tente novamente em alguns instantes.') from None
         job = TEMP_ROOT / ('job-' + uuid.uuid4().hex)
         job.mkdir(parents=True)
         size = 0
+        stage = time.monotonic()
         with (job / ('input.' + input_format)).open('wb') as destination:
             while chunk := await file.read(1024 * 1024):
                 size += len(chunk)
                 if size > MAX_FILE_SIZE:
                     raise HTTPException(413, f'O arquivo excede o limite de {MAX_FILE_SIZE_MB} MB.')
                 destination.write(chunk)
-        (job / 'request.json').write_text(json.dumps({'input': input_format, 'output': output_format, 'mime': file.content_type}), encoding='utf-8')
+        timings['upload_copy'] = (time.monotonic() - stage) * 1000
+        (job / 'request.json').write_text(json.dumps({'input': input_format, 'output': output_format, 'mime': file.content_type, 'csv_options': options}), encoding='utf-8')
+        stage = time.monotonic()
         spawning = asyncio.create_task(asyncio.create_subprocess_exec(
             sys.executable, '-m', 'backend.worker', str(job),
             cwd=str(Path(__file__).resolve().parents[2]),
@@ -107,7 +122,9 @@ async def convert(request: Request, file: UploadFile = File(...), output_format:
             # Acquire the handle even if cancellation races with process creation.
             process = await spawning
             raise
+        timings['spawn'] = (time.monotonic() - stage) * 1000
         await wait_for_worker(process, request)
+        timings['worker_wall'] = (time.monotonic() - stage) * 1000
         status_path = job / 'status.json'
         if process.returncode not in (0, 1) or not status_path.is_file():
             raise HTTPException(422, 'Não foi possível processar este documento. Tente uma versão menor ou simplificada.')
@@ -130,10 +147,14 @@ async def convert(request: Request, file: UploadFile = File(...), output_format:
             logger.info('conversion status=error type=%s code=%s', input_format, status['code'])
             raise HTTPException(422, status['message'])
         logger.info('conversion status=ok type=%s output=%s bytes=%d seconds=%.2f', input_format, output_format, size, time.monotonic() - started)
+        timings.update({key: value for key, value in status.get('timings_ms', {}).items()
+                        if key in {'worker_import', 'input_validation', 'converter_import', 'conversion', 'result_validation'}
+                        and isinstance(value, (int, float)) and 0 <= value < 1e9})
         response = TemporaryFileResponse(
             job / ('result.' + output_format), job=job,
             media_type=MIMES[output_format], filename=output_name(file.filename or 'documento', output_format),
-            headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Conversion-Warnings': quote(json.dumps(status['warnings'], ensure_ascii=False))},
+            headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Conversion-Warnings': quote(json.dumps(status['warnings'], ensure_ascii=False)),
+                     'Server-Timing': ', '.join(f'{key};dur={value:.2f}' for key, value in timings.items())},
         )
         response_owns_job = True
         return response

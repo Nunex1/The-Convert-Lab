@@ -1,0 +1,238 @@
+{
+  "python": "3.13.14",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "sampling_ms": 5,
+  "runs": 10,
+  "cases": {
+    "python_start": [
+      {
+        "seconds": 0.05736330000013368,
+        "peak_rss_mb": 12.44140625
+      },
+      {
+        "seconds": 0.052473699999836754,
+        "peak_rss_mb": 12.44921875
+      },
+      {
+        "seconds": 0.053902000000107364,
+        "peak_rss_mb": 12.4296875
+      },
+      {
+        "seconds": 0.054198100000121485,
+        "peak_rss_mb": 12.59765625
+      },
+      {
+        "seconds": 0.053367499999922074,
+        "peak_rss_mb": 12.43359375
+      },
+      {
+        "seconds": 0.053711799999973664,
+        "peak_rss_mb": 12.4296875
+      },
+      {
+        "seconds": 0.055451799999900686,
+        "peak_rss_mb": 12.3984375
+      },
+      {
+        "seconds": 0.05330309999999372,
+        "peak_rss_mb": 12.4609375
+      },
+      {
+        "seconds": 0.05302050000000236,
+        "peak_rss_mb": 12.4375
+      },
+      {
+        "seconds": 0.06073559999981626,
+        "peak_rss_mb": 12.171875
+      }
+    ],
+    "worker_import": [
+      {
+        "seconds": 0.28472390000001724,
+        "peak_rss_mb": 45.8046875
+      },
+      {
+        "seconds": 0.30104389999996783,
+        "peak_rss_mb": 45.58984375
+      },
+      {
+        "seconds": 0.3089164999998957,
+        "peak_rss_mb": 45.6875
+      },
+      {
+        "seconds": 0.34090550000018993,
+        "peak_rss_mb": 45.51953125
+      },
+      {
+        "seconds": 0.3259378000000197,
+        "peak_rss_mb": 45.4765625
+      },
+      {
+        "seconds": 0.3168960000000425,
+        "peak_rss_mb": 45.51953125
+      },
+      {
+        "seconds": 0.31694740000011734,
+        "peak_rss_mb": 45.83203125
+      },
+      {
+        "seconds": 0.3272330000002057,
+        "peak_rss_mb": 45.64453125
+      },
+      {
+        "seconds": 0.3189118000000235,
+        "peak_rss_mb": 45.640625
+      },
+      {
+        "seconds": 0.3339336000001367,
+        "peak_rss_mb": 45.421875
+      }
+    ],
+    "sample.docx->md": [
+      {
+        "seconds": 0.9688882000000376,
+        "peak_rss_mb": 70.7734375,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.0057448999998542,
+        "peak_rss_mb": 70.7890625,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.2183127000000695,
+        "peak_rss_mb": 70.78515625,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.3165308000000095,
+        "peak_rss_mb": 70.8125,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.3872040999999626,
+        "peak_rss_mb": 71.0,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.9259124000000156,
+        "peak_rss_mb": 70.7578125,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 0.9012476999998853,
+        "peak_rss_mb": 70.94140625,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.2036187999999584,
+        "peak_rss_mb": 70.7578125,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 1.186237900000151,
+        "peak_rss_mb": 70.89453125,
+        "output_bytes": 5288,
+        "stages": null
+      },
+      {
+        "seconds": 2.5804173000001356,
+        "peak_rss_mb": 70.7734375,
+        "output_bytes": 5288,
+        "stages": null
+      }
+    ],
+    "sample.pdf->pptx": [
+      {
+        "seconds": 3.119001199999957,
+        "peak_rss_mb": 64.94921875,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 2.8948128000001816,
+        "peak_rss_mb": 64.75,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 2.744056700000101,
+        "peak_rss_mb": 64.8515625,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 2.3667725000000246,
+        "peak_rss_mb": 64.9375,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.8111756000000696,
+        "peak_rss_mb": 64.95703125,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.9900698999999804,
+        "peak_rss_mb": 64.75390625,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.8116646999999375,
+        "peak_rss_mb": 64.89453125,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.775149699999929,
+        "peak_rss_mb": 64.78125,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.8268359000001055,
+        "peak_rss_mb": 64.890625,
+        "output_bytes": 28365,
+        "stages": null
+      },
+      {
+        "seconds": 0.6887062999999216,
+        "peak_rss_mb": 64.91015625,
+        "output_bytes": 28365,
+        "stages": null
+      }
+    ]
+  },
+  "summary": {
+    "python_start": {
+      "median_seconds": 0.053806900000040514,
+      "p95_seconds": 0.06073559999981626,
+      "max_rss_mb": 12.59765625
+    },
+    "worker_import": {
+      "median_seconds": 0.3179296000000704,
+      "p95_seconds": 0.34090550000018993,
+      "max_rss_mb": 45.83203125
+    },
+    "sample.docx->md": {
+      "median_seconds": 1.210965750000014,
+      "p95_seconds": 2.5804173000001356,
+      "max_rss_mb": 71.0
+    },
+    "sample.pdf->pptx": {
+      "median_seconds": 0.908452900000043,
+      "p95_seconds": 3.119001199999957,
+      "max_rss_mb": 64.95703125
+    }
+  }
+}

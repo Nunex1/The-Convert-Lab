@@ -5,6 +5,8 @@ const icons = {
   docx: FileText,
   xlsx: Table2,
   pptx: Presentation,
+  csv: Table2,
+  xlsb: Table2,
 };
 
 export function OutputFormatSelector({

@@ -5,6 +5,7 @@ import { OutputFormatSelector } from "./output-format-selector";
 import { ConversionFlow } from "./conversion-flow";
 import { DownloadResult } from "./download-result";
 import { PrivacyStatus } from "./privacy-status";
+import { CsvOptions } from "./csv-options";
 
 export function DeviceRightPanel({ state }: { state: ConverterState }) {
   return (
@@ -24,6 +25,7 @@ export function DeviceRightPanel({ state }: { state: ConverterState }) {
         </span>
       </div>
       <div className="control-screen">
+        {state.connection === "loading" && <p className="action-caption" role="status">Conectando ao serviço. Após inatividade, a inicialização pode levar cerca de um minuto.</p>}
         {state.connection === "offline" && (
           <div className="connection-error" role="alert">
             <p>Serviço de conversão indisponível.</p>
@@ -47,6 +49,7 @@ export function DeviceRightPanel({ state }: { state: ConverterState }) {
           onSelect={state.selectOutput}
         />
         <ConversionFlow input={state.input} output={state.output} />
+        {state.output === "csv" && <CsvOptions value={state.csvOptions} onChange={state.setCsvOptions} disabled={state.busy} />}
         {state.result ? (
           <DownloadResult result={state.result} reset={state.reset} />
         ) : (
